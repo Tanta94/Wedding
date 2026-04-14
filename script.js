@@ -7,11 +7,14 @@ const weddingDate = new Date('2026-04-23T17:00:00');
 const SUPABASE_URL = 'https://lbkzzafhefajmnlcqvwl.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_secret_luoqIFWqKuwEf8gCUr1KAg_TLYuhY5N';
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (typeof supabase === 'undefined' || !supabase.createClient) {
+  console.error('Supabase library failed to load. Check the CDN script URL.');
+}
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let realtimeChannel;
 
 async function fetchMessages() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('messages')
     .select('id, name, text, created_at')
     .order('created_at', { ascending: false });
@@ -64,7 +67,7 @@ async function addMessage(name, text) {
   const cleanedName = name.trim() || 'Guest';
   const cleanedText = text.trim();
 
-  const { error } = await supabase.from('messages').insert([
+  const { error } = await supabaseClient.from('messages').insert([
     {
       name: cleanedName,
       text: cleanedText
@@ -89,7 +92,7 @@ async function initMessages() {
 function subscribeToMessages() {
   if (realtimeChannel) return;
 
-  realtimeChannel = supabase
+  realtimeChannel = supabaseClient
     .channel('public:messages')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async () => {
       const messages = await fetchMessages();
