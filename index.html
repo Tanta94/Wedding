@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mohamed & Hager | Wedding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scene">
+    <div class="heart heart--one"></div>
+    <div class="heart heart--two"></div>
+    <div class="heart heart--three"></div>
+  </div>
+
+  <main class="page-shell">
+    <section class="hero">
+      <p class="eyebrow">A celebration of love</p>
+      <h1>Mohamed Mamdouh<span class="divider">&</span>Hager Mohamed</h1>
+      <p class="subtitle">Join us for an intimate evening honoring our love and the beginning of our forever.</p>
+    </section>
+
+    <section class="details-card">
+      <div>
+        <strong>Date</strong>
+        <span>April 23, 2026</span>
+      </div>
+      <div>
+        <strong>Time</strong>
+        <span>5:00 PM &ndash; 7:00 PM</span>
+      </div>
+      <div>
+        <strong>Location</strong>
+        <span>El-Mosheer Tantawy Mosque</span>
+      </div>
+      <a class="button" href="https://www.google.com/maps/dir/?api=1&destination=El-Mosheer+Tantawy+Mosque" target="_blank" rel="noreferrer">Get directions</a>
+    </section>
+
+    <section class="countdown-section">
+      <div class="countdown-card">
+        <h2>Countdown</h2>
+        <div class="countdown-grid">
+          <div><span id="days">00</span><small>Days</small></div>
+          <div><span id="hours">00</span><small>Hours</small></div>
+          <div><span id="minutes">00</span><small>Minutes</small></div>
+          <div><span id="seconds">00</span><small>Seconds</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="map-section">
+      <div class="map-wrapper">
+        <iframe
+          title="El-Mosheer Tantawy Mosque"
+          src="https://www.google.com/maps?q=El-Mosheer+Tantawy+Mosque&output=embed"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </section>
+
+    <section class="message-panel">
+      <div class="message-form-card">
+        <h2>Share your wish</h2>
+        <form id="messageForm">
+          <label for="guestName">Your name</label>
+          <input id="guestName" name="guestName" type="text" placeholder="e.g. Fatima" required maxlength="40">
+
+          <label for="guestMessage">Message</label>
+          <textarea id="guestMessage" name="guestMessage" rows="4" placeholder="Write a short congratulatory message..." required maxlength="180"></textarea>
+
+          <button type="submit">Send love</button>
+        </form>
+        <p class="thank-you" id="thankYouMessage" aria-live="polite"></p>
+      </div>
+
+      <div class="messages-feed">
+        <h2>Guest messages</h2>
+        <div id="messages" class="messages-grid" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
