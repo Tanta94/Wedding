@@ -5,7 +5,7 @@ const weddingDate = new Date('2026-04-23T17:00:00');
 
 // Replace these with your Supabase project values.
 const SUPABASE_URL = 'https://lbkzzafhefajmnlcqvwl.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_PUBLIC_KEY';
+const SUPABASE_ANON_KEY = 'sb_secret_luoqIFWqKuwEf8gCUr1KAg_TLYuhY5N';
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let realtimeChannel;
