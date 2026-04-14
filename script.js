@@ -1,31 +1,38 @@
 const form = document.getElementById('messageForm');
 const messagesContainer = document.getElementById('messages');
 const thankYouMessage = document.getElementById('thankYouMessage');
-const storageKey = 'weddingMessages';
 const weddingDate = new Date('2026-04-23T17:00:00');
 
-function getMessages() {
-  try {
-    return JSON.parse(localStorage.getItem(storageKey)) || [];
-  } catch (error) {
+// Replace these with your Supabase project values.
+const SUPABASE_URL = 'https://lbkzzafhefajmnlcqvwl.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_PUBLIC_KEY';
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let realtimeChannel;
+
+async function fetchMessages() {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('id, name, text, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching messages:', error);
     return [];
   }
+
+  return data || [];
 }
 
-function saveMessages(messages) {
-  localStorage.setItem(storageKey, JSON.stringify(messages));
-}
-
-function renderMessages() {
-  const messages = getMessages();
+function renderMessages(messages) {
   messagesContainer.innerHTML = '';
 
-  if (messages.length === 0) {
+  if (!messages || messages.length === 0) {
     messagesContainer.innerHTML = '<p class="empty-state">Be the first to send your best wishes.</p>';
     return;
   }
 
-  messages.slice().reverse().forEach((message) => {
+  messages.forEach((message) => {
     const card = document.createElement('article');
     card.className = 'message-card';
 
@@ -33,11 +40,11 @@ function renderMessages() {
     text.textContent = message.text;
 
     const name = document.createElement('strong');
-    name.textContent = message.name;
+    name.textContent = message.name || 'Guest';
 
     const time = document.createElement('time');
-    time.dateTime = message.date;
-    time.textContent = new Date(message.date).toLocaleString([], {
+    time.dateTime = message.created_at;
+    time.textContent = new Date(message.created_at).toLocaleString([], {
       month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 
@@ -53,33 +60,53 @@ function showThankYou(name) {
   }, 5000);
 }
 
-function addMessage(name, text) {
-  const messages = getMessages();
-  messages.push({
-    name: name.trim() || 'Guest',
-    text: text.trim(),
-    date: new Date().toISOString()
-  });
-  saveMessages(messages);
-  renderMessages();
-  showThankYou(name.trim() || 'Guest');
+async function addMessage(name, text) {
+  const cleanedName = name.trim() || 'Guest';
+  const cleanedText = text.trim();
+
+  const { error } = await supabase.from('messages').insert([
+    {
+      name: cleanedName,
+      text: cleanedText
+    }
+  ]);
+
+  if (error) {
+    console.error('Error sending message:', error);
+    thankYouMessage.textContent = 'Unable to send your message right now. Please try again.';
+    return;
+  }
+
+  showThankYou(cleanedName);
 }
 
-form.addEventListener('submit', (event) => {
+async function initMessages() {
+  const messages = await fetchMessages();
+  renderMessages(messages);
+  subscribeToMessages();
+}
+
+function subscribeToMessages() {
+  if (realtimeChannel) return;
+
+  realtimeChannel = supabase
+    .channel('public:messages')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async () => {
+      const messages = await fetchMessages();
+      renderMessages(messages);
+    })
+    .subscribe();
+}
+
+form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const name = form.guestName.value;
   const text = form.guestMessage.value;
 
   if (!name.trim() || !text.trim()) return;
 
-  addMessage(name, text);
+  await addMessage(name, text);
   form.reset();
-});
-
-window.addEventListener('storage', (event) => {
-  if (event.key === storageKey) {
-    renderMessages();
-  }
 });
 
 function updateCountdown() {
@@ -105,6 +132,8 @@ function updateCountdown() {
   document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 }
 
-renderMessages();
-updateCountdown();
-setInterval(updateCountdown, 1000);
+window.addEventListener('load', () => {
+  initMessages();
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+});
