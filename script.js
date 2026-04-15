@@ -5,7 +5,7 @@ const weddingDate = new Date('2026-04-23T17:00:00');
 
 // Replace these with your Supabase project values.
 const SUPABASE_URL = 'https://lbkzzafhefajmnlcqvwl.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_secret_Gl4azpqoCDXHRJYYz58-PQ_WYHzgva6';
+const SUPABASE_ANON_KEY = 'sb_publishable_wDY9D7XxXWvNKJPhUTTS7A_vrZ099yx';
 
 if (typeof supabase === 'undefined' || !supabase.createClient) {
   console.error('Supabase library failed to load. Check the CDN script URL.');
