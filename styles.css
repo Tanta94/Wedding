@@ -122,7 +122,7 @@ body::before {
   margin: 0;
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(3rem, 6vw, 5.4rem);
-  line-height: 0.9;
+  line-height: 1.2;
   letter-spacing: 0.05em;
 }
 
